@@ -205,3 +205,17 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# other Python
+*.pyc
+*.pyo
+*.pyd
+pip-selfcheck.json
+
+# Poetry
+.poetry
+
+# IDEs
+.idea/
+.vscode/
