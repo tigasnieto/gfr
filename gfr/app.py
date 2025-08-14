@@ -1,5 +1,13 @@
 import typer
-from gfr.commands import hello, create, init, addmicro, add, commit, ac, push, acp, status, link, addasset, doc, dev
+from gfr.commands import (
+    hello, create,
+    init, addmicro,
+    add, commit, push, ac, acp,
+    status, link,
+    addasset,
+    doc, dev,
+    feature, bugfix
+)
 
 # Create the main Typer application
 app = typer.Typer(
@@ -25,6 +33,8 @@ app.add_typer(addasset.app, name='addasset')
 app.add_typer(addasset.app, name='adda')
 app.add_typer(dev.app, name='dev')
 app.add_typer(doc.app, name='doc')
+app.add_typer(feature.app, name='feature')
+app.add_typer(bugfix.app, name='bugfix')
 
 if __name__ == "__main__":
     app()

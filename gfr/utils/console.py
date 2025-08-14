@@ -13,11 +13,13 @@ def get_multiline_input() -> str:
         str: The multi-line text entered by the user.
     """
     lines = []
-    SAVE_KEY = '\x13' 
 
     while True:
         try:
             line = sys.stdin.readline()
+            if line.strip() == "'''":
+                # Stop on '''
+                break
             lines.append(line)
         except (EOFError, KeyboardInterrupt):
             # Handle Ctrl+D or Ctrl+C as termination

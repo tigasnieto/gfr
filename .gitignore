@@ -219,3 +219,7 @@ pip-selfcheck.json
 # IDEs
 .idea/
 .vscode/
+
+
+# other files
+.gfr.yml

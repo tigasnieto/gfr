@@ -58,10 +58,10 @@ def commit(
         if issue_number:
             console.print(f"Found issue number [bold yellow]{issue_number}[/bold yellow] from branch '{branch_name}'.")
             microservice_message = f"{message} (#{issue_number})"
-            parent_message = f"update {target_name} with issue number {issue_number}: {message}"
+            parent_message = f"update {target_name} with issue number {issue_number}: [{message}]"
         else:
             microservice_message = message
-            parent_message = f"update {target_name}: {message}"
+            parent_message = f"update {target_name}: [{message}]"
 
         # --- Execute the commit operation ---
         console.print(f"Committing in [bold cyan]{target_name}[/bold cyan]...")

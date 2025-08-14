@@ -1,10 +1,10 @@
-# gfr/utils/github/api.py
 import os
 from dotenv import load_dotenv
 from github import Github, GithubException
 
 # Import the manager and the custom exception
 from .repositories import RepositoryManager, GitHubError
+from .issues import IssueManager
 
 class GitHubAPI:
     """A wrapper for the PyGithub library to handle auth and operations."""
@@ -21,10 +21,11 @@ class GitHubAPI:
         try:
             self._gh = Github(token)
             self._org = self._gh.get_organization(self.org_name)
+            self._user = self._gh.get_user(self.username)
         except GithubException as e:
             raise GitHubError(f"Auth/Org error: {e.data.get('message', 'Unknown error')}")
 
         # --- Initialize and expose managers ---
         self.repos = RepositoryManager(self._gh, self._org)
-        # self.issues = IssueManager(self._gh, self._org) # You would add this later
+        self.issues = IssueManager(self._gh, self._user)
         # self.prs = PullRequestManager(self._gh, self._org) # And this one
