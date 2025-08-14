@@ -2,13 +2,14 @@ import subprocess
 import sys
 import os
 from .exceptions import GitError
+from .repo_status import RepoStatus
 
 class GitOperations:
     """
     Handles the execution of local Git commands.
     """
 
-    def _run_command(self, command: list[str], cwd: str = "."):
+    def _run_command(self, command: list[str], cwd: str = ".", strip: bool = True):
         """
         A private helper to run git commands and handle errors.
 
@@ -33,7 +34,10 @@ class GitOperations:
 
             if process.returncode != 0:
                 raise GitError(f"Git command failed: {command}\nError: {stderr.strip()}")
-            return stdout.strip()
+            if strip:
+                return stdout.strip()
+            else:
+                return stdout
 
         except FileNotFoundError:
             raise GitError("`git` command not found. Is Git installed and in your PATH?")
@@ -107,3 +111,75 @@ class GitOperations:
     def commit(self, message: str, path: str = "."):
         """Records changes to the repository."""
         self._run_command(["git", "commit", "-m", message], cwd=path)
+        
+    def get_root(self, path: str = ".") -> str:
+        """Finds the root directory of the git repository."""
+        return self._run_command(["git", "rev-parse", "--show-toplevel"], cwd=path)
+
+    def get_submodules(self, path: str = ".") -> list[str]:
+        """Gets a list of submodule paths."""
+        try:
+            # This command lists submodules, e.g., " 1234abcd... path/to/submodule (HEAD)"
+            status_output = self._run_command(["git", "submodule", "status"], cwd=path)
+            if not status_output:
+                return []
+            # Extract just the path part
+            return [line.strip().split()[1] for line in status_output.splitlines()]
+        except GitError:
+            # If the command fails (e.g., no submodules), return an empty list
+            return []
+        
+    def get_current_branch(self, path: str = ".") -> str:
+        """Gets the name of the current active branch."""
+        return self._run_command(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=path)
+    
+    def push_all(self, path: str = "."):
+        """Pushes all branches to the remote."""
+        self._run_command(["git", "push", "--all"], cwd=path)
+        
+        
+    def get_status(self, path: str = ".") -> RepoStatus:
+        """
+        Gets the detailed status of the repository at the given path, including
+        lists of files for each state.
+
+        Args:
+            path (str): The path to the repository.
+
+        Returns:
+            RepoStatus: An object containing the branch and lists of files.
+        """
+        branch = self.get_current_branch(path)
+        status_output = self._run_command(["git", "status", "--porcelain"], cwd=path, strip=False)
+
+        staged_files = []
+        unstaged_files = []
+        untracked_files = []
+
+        if not status_output:
+            return RepoStatus(branch=branch)
+
+        for line in status_output.splitlines():
+            code = line[:2]
+            filename = line[3:]
+
+            if code == '??':
+                untracked_files.append(filename)
+            else:
+                # Staged changes (M, A, D, R, C in the first char)
+                if code[0] != ' ':
+                    staged_files.append(filename)
+                # Unstaged/Modified changes (M, D in the second char)
+                if code[1] != ' ':
+                    unstaged_files.append(filename)
+        
+        return RepoStatus(
+            branch=branch,
+            staged=staged_files,
+            unstaged=unstaged_files,
+            untracked=untracked_files
+        )
+        
+    def get_remote_url(self, remote_name: str = "origin", path: str = ".") -> str:
+        """Gets the URL of a specified remote."""
+        return self._run_command(["git", "config", "--get", f"remote.{remote_name}.url"], cwd=path)
