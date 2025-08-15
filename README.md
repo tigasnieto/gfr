@@ -20,7 +20,7 @@ pip install gfr
 
 Alternatively, you can clone the repository and install it locally. This is useful if you want to contribute to the project.
 ```
-git clone <repository_url>
+git clone https://github.com/rahmasir/gfr
 cd gfr
 pip install .
 ```
