@@ -4,7 +4,7 @@ from rich.console import Console
 
 from gfr.utils.git.operations import GitOperations, GitError
 
-app = typer.Typer(name="push", help="Push all branches for the parent repo and all microservices.", no_args_is_help=True)
+app = typer.Typer(name="push", help="Push all branches for the parent repo and all microservices.")
 console = Console()
 
 @app.callback(invoke_without_command=True)

@@ -22,7 +22,7 @@ class GitOperations:
         """
         try:
             # Resolve the path to an absolute path for consistency
-            abs_cwd = os.path.abspath(cwd)
+            abs_cwd = os.path.abspath(cwd)         
             process = subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE,
@@ -183,3 +183,35 @@ class GitOperations:
     def get_remote_url(self, remote_name: str = "origin", path: str = ".") -> str:
         """Gets the URL of a specified remote."""
         return self._run_command(["git", "config", "--get", f"remote.{remote_name}.url"], cwd=path)
+    
+    def delete_remote_branch(self, branch_name: str, remote_name: str = "origin", path: str = "."):
+        """Deletes a branch from the specified remote."""
+        self._run_command(["git", "push", remote_name, "--delete", branch_name], cwd=path)
+        
+    def delete_local_branch(self, branch_name: str, force: bool = False, path: str = "."):
+        """Deletes a local branch."""
+        cmd = ["git", "branch", "-d", branch_name]
+        if force:
+            cmd[2] = "-D"
+        self._run_command(cmd, cwd=path)
+        
+    def get_latest_tag(self, path: str = ".") -> str | None:
+        """
+        Gets the latest version tag from the repository using semantic version sorting.
+        Returns None if no tags are found.
+        """
+        try:
+            # Sorts tags by version number (e.g., v1.10.0 comes after v1.9.0)
+            # and returns the most recent one.
+            return self._run_command(["git", "tag", "-l", "--sort=-v:refname"], cwd=path).splitlines()[0]
+        except (GitError, IndexError):
+            # Fails if no tags exist or command fails
+            return None
+        
+    def create_tag(self, tag_name: str, message: str, path: str = "."):
+        """Creates a new annotated tag."""
+        self._run_command(["git", "tag", "-a", tag_name, "-m", message], cwd=path)
+
+    def push_tags(self, path: str = "."):
+        """Pushes all tags to the remote."""
+        self._run_command(["git", "push", "--tags"], cwd=path)

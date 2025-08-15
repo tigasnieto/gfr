@@ -3,17 +3,10 @@ from rich.console import Console
 from rich.table import Table
 
 from gfr.utils.git.operations import GitOperations, GitError
+from gfr.utils.command_helpers import format_git_url_to_http
 
 app = typer.Typer(name="link", help="Display GitHub links for the parent repo and all submodules.")
 console = Console()
-
-def _format_git_url_to_http(url: str) -> str:
-    """Converts a git URL (SSH or HTTPS) to a web-viewable HTTPS URL."""
-    if url.endswith(".git"):
-        url = url[:-4]
-    if url.startswith("git@"):
-        url = url.replace(":", "/").replace("git@", "https://")
-    return url
 
 @app.callback(invoke_without_command=True)
 def link():
@@ -39,7 +32,7 @@ def link():
             repo_name = "root" if repo_path == "." else repo_path
             try:
                 remote_url = git_ops.get_remote_url(path=repo_path)
-                http_url = _format_git_url_to_http(remote_url)
+                http_url = format_git_url_to_http(remote_url)
                 table.add_row(repo_name, f"[link={http_url}]{http_url}[/link]")
             except GitError:
                 table.add_row(repo_name, "[dim]No remote found[/dim]")

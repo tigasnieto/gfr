@@ -88,6 +88,10 @@ def main(
             git_ops.push_branch("main", set_upstream=True, path=micro_service_name)
             git_ops.push_branch("develop", set_upstream=True, path=micro_service_name)
             console.print("✔ 'main' and 'develop' branches created and pushed.")
+            
+            status.update("[bold yellow]Setting 'develop' as default branch...[/bold yellow]")
+            github_api.repos.edit(repo, default_branch="develop")
+            console.print("✔ Default branch set to 'develop' on GitHub.")
 
             # Step 5: Switch to develop branch
             git_ops.switch_branch("develop", path=micro_service_name)

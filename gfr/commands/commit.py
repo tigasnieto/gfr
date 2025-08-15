@@ -11,7 +11,7 @@ console = Console()
 
 def _extract_issue_number(branch_name: str) -> str | None:
     """Extracts an issue number from a branch name like 'feature/6-login-page'."""
-    match = re.search(r'/(?P<num>\d+)', branch_name)
+    match = re.search(r'/(?P<num>\d+)-', branch_name)
     return match.group("num") if match else None
 
 @app.callback(invoke_without_command=True)

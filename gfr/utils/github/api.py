@@ -4,6 +4,7 @@ from github import Github, GithubException
 
 # Import the manager and the custom exception
 from .repositories import RepositoryManager, GitHubError
+from .pull_requests import PullRequestManager
 from .issues import IssueManager
 
 class GitHubAPI:
@@ -23,9 +24,11 @@ class GitHubAPI:
             self._org = self._gh.get_organization(self.org_name)
             self._user = self._gh.get_user(self.username)
         except GithubException as e:
-            raise GitHubError(f"Auth/Org error: {e.data.get('message', 'Unknown error')}")
+            error_message = f"Authentication or organization lookup failed. Details: {e.data.get('message', 'Unknown error')}"
+            error_tip = "\nPlease check your network connection and ensure your GITHUB_TOKEN is correct and has the required permissions."
+            raise GitHubError(error_message + error_tip)
 
         # --- Initialize and expose managers ---
         self.repos = RepositoryManager(self._gh, self._org)
         self.issues = IssueManager(self._gh, self._user)
-        # self.prs = PullRequestManager(self._gh, self._org) # And this one
+        self.prs = PullRequestManager(self._gh, self._user)

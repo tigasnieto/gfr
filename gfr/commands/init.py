@@ -81,6 +81,10 @@ def main():
             git_ops.push_branch("develop", set_upstream=True)
             git_ops.push_branch("doc", set_upstream=True)
             console.print("✔ 'develop' and 'doc' branches pushed to remote.")
+            
+            status.update("[bold yellow]Setting 'develop' as default branch...[/bold yellow]")
+            github_api.repos.edit(repo, default_branch="develop")
+            console.print("✔ Default branch set to 'develop' on GitHub.")
 
             # Step 5: Switch to Develop Branch
             status.update("[bold yellow]Switching to 'develop' branch...[/bold yellow]")
