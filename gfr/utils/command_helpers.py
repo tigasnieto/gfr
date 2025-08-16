@@ -173,8 +173,17 @@ def finish_task(task_type: str, microservice_name: str):
             git_ops.delete_remote_branch(current_branch, path=target_path)
             console.print(f"✔ Deleted remote branch '{current_branch}'.")
 
-        config.set_last_used_microservice(target_path)
+            if target_path != ".":
+                status.update(f"[bold yellow]Updating parent repository...[/bold yellow]")
+                parent_branch = git_ops.get_current_branch(path=".")
+                git_ops.add([target_path], path=".")
+                commit_message = f"Update '{target_name}' submodule after finishing '{current_branch}'"
+                git_ops.commit(commit_message, path=".")
+                git_ops.push_branch(parent_branch, path=".")
+                console.print(f"✔ Updated, committed, and pushed parent repository on branch '{parent_branch}'.")
+                config.set_last_used_microservice(target_path)
 
+        config.set_last_used_microservice(target_path)
         console.print(f"\n[bold green]✔ Success![/bold green] The {task_type} has been finished and merged.")
 
     except (GitError, GitHubError) as e:

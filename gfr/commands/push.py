@@ -27,7 +27,7 @@ def push():
         
         # --- Push all branches for each repository ---
         for repo_path in all_repos:
-            repo_name = "parent project" if repo_path == "." else repo_path
+            repo_name = "root project" if repo_path == "." else repo_path
             console.print(f"\nPushing all branches for [bold cyan]{repo_name}[/bold cyan]...")
             git_ops.push_all(path=repo_path)
             console.print(f"✔ Successfully pushed all branches for [bold cyan]{repo_name}[/bold cyan].")
