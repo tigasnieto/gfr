@@ -50,8 +50,8 @@ def main(
         is_private = questionary.select(
             "Select repository visibility:",
             choices=[
-                {"name": "Private", "value": True},
-                {"name": "Public", "value": False}
+                {"name": "Public", "value": False},
+                {"name": "Private", "value": True}
             ],
             use_indicator=True
         ).ask()
