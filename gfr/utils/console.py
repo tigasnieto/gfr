@@ -20,6 +20,9 @@ def get_multiline_input() -> str:
             if line.strip() == "'''":
                 # Stop on '''
                 break
+            elif line.strip() == "'''delete":
+                lines.pop()
+                continue
             lines.append(line)
         except (EOFError, KeyboardInterrupt):
             # Handle Ctrl+D or Ctrl+C as termination

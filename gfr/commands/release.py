@@ -146,7 +146,7 @@ def _finish_release(git_ops: GitOperations, github_api: GitHubAPI, config: GFRCo
     previous_tag = git_ops.get_latest_tag(path=target_path).splitlines()[1] if len(git_ops.get_latest_tag(path=target_path).splitlines()) > 1 else None
     commit_log = github_api.repos.compare_commits(repo, previous_tag, tag_name) if previous_tag else ["- Initial Release"]
     
-    console.print("\n[bold cyan]Enter any additional notes for the GitHub Release (Ctrl+S to finish):[/bold cyan]")
+    console.print("\n[bold cyan]Enter any additional notes for the GitHub Release:[/bold cyan]")
     extra_notes = get_multiline_input()
     commits_link = f"{repo.html_url}/commits/{tag_name}"
     release_notes = (

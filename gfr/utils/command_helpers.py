@@ -75,7 +75,7 @@ def start_new_task(task_type: str, microservice_name: str, task_name: str):
             repo_name_for_github = microservice_name
 
         # --- Get Issue Details ---
-        console.print(f"\n[bold cyan]Enter description for the {task_type} '{task_name}'.[/bold cyan] (Press [bold]Ctrl+S[/bold] on a blank line, then [bold]Enter[/bold] to finish)")
+        console.print(f"\n[bold cyan]Enter description for the {task_type} '{task_name}'.[/bold cyan]")
         description = get_multiline_input()
         
         labels = ["enhancement" if task_type == "feature" else "bug"]
